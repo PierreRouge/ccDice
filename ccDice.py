@@ -141,140 +141,6 @@ def compute_matching(C_A, C_B, u, t, alpha=0.6):
                 coor_a = indices_A[i]
                 coor_b = indices_B[i]
     return mu_ab
-
-
-# def compute_matchingV2(A, B, C_A, C_B, u, t, alpha=0.5):
-#     n, m = A.shape
-#     M = np.zeros((u, t))
-#     indices_A = []
-#     indices_B = []
-#     size_cc = np.zeros((u, 1))
-    
-#     # Fill matrix
-#     for i in range(n):
-#         for j in range(m):
-#             if (C_A[i][j] > 0 and C_B[i][j] > 0):
-                
-#                 M[C_A[i][j] - 1][C_B[i][j] - 1] += 1
-                
-#             if C_A[i][j] > 0:
-                
-#                 size_cc[C_A[i][j] - 1] += 1
-    
-#     # Compute embedding scores
-#     M = M / size_cc
-#     indices_A, indices_B = np.meshgrid(np.arange(M.shape[0]), np.arange(M.shape[1]))
-#     L = M.flatten()
-#     indices_A = indices_A.flatten()
-#     indices_B = indices_B.flatten()
-    
-#     # Sort the list
-#     indices = np.argsort(-L)
-#     L = L[indices]
-#     indices_A = indices_A[indices]
-#     indices_B = indices_B[indices]
-    
-#     mu_ab = 0
-#     i = 0
-#     s = L[0]
-#     coor_a = indices_A[0]
-#     coor_b = indices_B[0]
-#     left_list = []
-#     right_list = []
-#     while s >= alpha and i < len(L):
-#         if (coor_a not in left_list) and (coor_b not in right_list):
-            
-#             left_list.append(coor_a)
-#             right_list.append(coor_b)
-#             mu_ab += 1
-        
-#         i += 1
-#         if i < len(L):
-#             s = L[i]
-#             coor_a = indices_A[i]
-#             coor_b = indices_B[i]
-#     return mu_ab
-
-
-# def compute_matchingV3(A, B, C_A, C_B, u, t, alpha=0.5):
-#     n, m = A.shape
-#     M = np.zeros((u, t))
-#     size_ccA = np.zeros((u, 1))
-#     size_ccB = np.zeros((t, 1))
-#     for i in range(n):
-#         for j in range(m):
-#             if (C_A[i][j] > 0 and C_B[i][j] > 0):
-                
-#                 M[C_A[i][j] - 1][C_B[i][j] - 1] += 1
-                
-#             if C_A[i][j] > 0:
-                
-#                 size_ccA[C_A[i][j] - 1] += 1
-                
-#             if C_B[i][j] > 0:
-                
-#                 size_ccB[C_B[i][j] - 1] += 1
-      
-#     M1 = M / size_ccA
-#     M2 = M.T / size_ccB
-#     indices_A1, indices_B1 = np.meshgrid(np.arange(M1.shape[0]), np.arange(M1.shape[1]))
-#     indices_A2, indices_B2 = np.meshgrid(np.arange(M2.shape[0]), np.arange(M2.shape[1]))
-#     L = np.concatenate((M1.flatten(), M2.flatten()))
-    
-#     indices_A = np.concatenate((indices_A1.flatten(), indices_A2.flatten()))
-#     indices_B = np.concatenate((indices_B1.flatten(), indices_B2.flatten()))
-    
-#     # Sort the list
-#     indices = np.argsort(-L)
-#     L = L[indices]
-#     indices_A = indices_A[indices]
-#     indices_B = indices_B[indices]
-    
-#     mu = 0
-#     i = 0
-#     s = L[0]
-#     coor_a = indices_A[0]
-#     coor_b = indices_B[0]
-#     left_list = []
-#     right_list = []
-#     while s >= alpha and i < len(L):
-#         if (coor_a not in left_list) and (coor_b not in right_list):
-            
-#             left_list.append(coor_a)
-#             right_list.append(coor_b)
-#             mu += 1
-        
-#         i += 1
-#         if i < len(L):
-#             s = L[i]
-#             coor_a = indices_A[i]
-#             coor_b = indices_B[i]
-#     return mu
-    
-    
-def ccDice_v2(y_pred, y_true, alpha=0.6):
-    
-    y_pred_label, cc_pred = label(y_pred, return_num=True)
-    y_true_label, cc_true = label(y_true, return_num=True)
-    
-    mu_ab = compute_matching(y_pred_label, y_true_label, cc_pred, cc_true, alpha)
-    mu_ba = compute_matching(y_true_label, y_pred_label, cc_true, cc_pred, alpha)
-    
-    cc_dice = (mu_ab + mu_ba) / (cc_pred + cc_true)
-    
-    return cc_dice
-
-
-# def ccDice_v3(y_pred, y_true, alpha=0.5):
-    
-#     y_pred_label, cc_pred = label(y_pred, return_num=True)
-#     y_true_label, cc_true = label(y_true, return_num=True)
-    
-#     mu = compute_matchingV3(y_pred, y_true, y_pred_label, y_true_label, cc_pred, cc_true, alpha)
-    
-#     cc_dice = mu / (cc_pred + cc_true)
-    
-#     return cc_dice
     
 
 if __name__ == '__main__':
@@ -309,21 +175,10 @@ if __name__ == '__main__':
     ax1.imshow(y_pred)
     ax2.imshow(y_true)
     
-    alpha=0.7
+    alpha=0.5
     
     start = time.time()
     ccdice_v1 = ccDice(y_pred, y_true, alpha=alpha)
     stop = time.time()
     print(f"time v1 {stop - start}")
     
-    start = time.time()
-    ccdice_v2 = ccDice_v2(y_pred, y_true, alpha=alpha)
-    stop = time.time()
-    print(f"time v2 {stop - start}")
-    # bm = BettiMatching(y_pred, y_true)
-    # BettiMatchingError = bm.loss()
-    print(ccdice_v1)
-    print(ccdice_v2)
-    # print(BettiMatchingError)
-    
-     
