@@ -14,7 +14,7 @@ from glob import glob
 from skimage import io
 
 from utils.utils_measure import dice_numpy, b0_error_numpy, cldice_numpy
-from ccDice import ccDice
+from ccDice import ccDice_v2, ccDice
 from utils.BettiMatching import BettiMatching
 
 input_dir_gt = 'data/CHASE/rescale'
@@ -24,28 +24,26 @@ res_dir = 'res/'
 if not os.path.exists(res_dir):
     os.makedirs(res_dir)
 
-nb_disconnections = 10
-
 full_res = open(res_dir + '/full_res.csv', 'w')
-fieldnames = ['rescale', 'Dice', 'clDice', 'B0Error', 'BettiMatchingError', 'ccDice']
+fieldnames = ['n', 'Dice', 'clDice', 'B0Error', 'BettiMatchingError', 'ccDice']
 writer_full_res = csv.DictWriter(full_res, fieldnames=fieldnames)
 writer_full_res.writeheader()
 
 res = open(res_dir + '/res.csv', 'w')
-fieldnames = ['rescale', 'Dice', 'clDice', 'B0Error', 'BettiMatchingError', 'ccDice']
+fieldnames = ['n', 'Dice', 'clDice', 'B0Error', 'BettiMatchingError', 'ccDice']
 writer_res = csv.DictWriter(res, fieldnames=fieldnames)
 writer_res.writeheader()
 
 runtime = open(res_dir + '/runtime.csv', 'w')
-fieldnames = ['rescale', 'Dice_runtime', 'clDice_runtime', 'B0Error_runtime', 'BettiMatchingError_runtime', 'ccDice_runtime']
+fieldnames = ['n', 'Dice_runtime', 'clDice_runtime', 'B0Error_runtime', 'BettiMatchingError_runtime', 'ccDice_runtime']
 writer_runtime = csv.DictWriter(runtime, fieldnames=fieldnames)
 writer_runtime.writeheader()
 
 
-for j in range(1, 11):
+for j in range(80, 180, 4):
     
-    input_dir_deco1 = os.path.join(input_dir_gt, f'size={(64*j, 64*j)}/GT/*')
-    input_dir_deco2 = os.path.join(input_dir_seg, f'size={(64*j, 64*j)}/nb_disconnections=10')
+    input_dir_deco1 = os.path.join(input_dir_gt, f'n={64*64*j}/GT/*')
+    input_dir_deco2 = os.path.join(input_dir_seg, f'n={64*64*j}/nb_disconnections=10')
     
     dice_list = []
     cldice_list = []
@@ -65,7 +63,7 @@ for j in range(1, 11):
         image_disconnected = io.imread(os.path.join(input_dir_deco2, filename)).astype(bool)
         
         start = time.time()
-        ccdice, _ = ccDice(image_disconnected, image, alpha=0.5)
+        ccdice = ccDice(image_disconnected, image, alpha=0.6)
         stop = time.time()
         time_ccdice = stop - start
         print("Time ccDice")
@@ -117,7 +115,7 @@ for j in range(1, 11):
         time_cldice_list.append(time_cldice)
         
         dict_csv = {
-            'rescale': str(1.0 + j * 0.2),
+            'n': str(64 * 64 * j),
             'Dice': dice,
             'clDice': cldice,
             'B0Error': b0_error,
@@ -127,7 +125,7 @@ for j in range(1, 11):
         writer_full_res.writerow(dict_csv)
         
     dict_csv = {
-        'rescale': str(j),
+        'n': str(64 * 64 * j),
         'Dice': np.mean(dice_list),
         'clDice': np.mean(cldice_list),
         'B0Error': np.mean(b0_error_list),
@@ -137,7 +135,7 @@ for j in range(1, 11):
     writer_res.writerow(dict_csv)
     
     dict_runtime = {
-        'rescale': str(j),
+        'n': str(64 * 64 * j),
         'Dice_runtime': np.mean(time_dice_list),
         'clDice_runtime': np.mean(time_cldice_list),
         'B0Error_runtime': np.mean(time_b0error_list),

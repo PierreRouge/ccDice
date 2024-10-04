@@ -14,7 +14,7 @@ from glob import glob
 from skimage import io
 
 from utils.utils_measure import dice_numpy, b0_error_numpy, cldice_numpy
-from ccDice import ccDice
+from ccDice import ccDice_v2
 from utils.BettiMatching import BettiMatching
 
 input_dir_gt = 'data/CHASE/GT/*'
@@ -65,7 +65,7 @@ for j in range(1, nb_disconnections + 1):
         image_disconnected = io.imread(os.path.join(input_dir_deco2, filename)).astype(bool)
         
         start = time.time()
-        ccdice = ccDice(image_disconnected, image, alpha=0.5)
+        ccdice = ccDice_v2(image_disconnected, image, alpha=0.5)
         stop = time.time()
         time_ccdice = stop - start
         print("Time ccDice")
