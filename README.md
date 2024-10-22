@@ -4,7 +4,7 @@ Official repository for the **ccDice metric** presented at the Workshop on Topol
 
 You can find our paper [here](https://hal.science/hal-04653406/document).
 
-<p align="center"><img src="https://github.com/PierreRouge/ccDice/assets/cancer_cells_example.png", alt="drawing" width="500"/>
+<p align="center"><img src="https://github.com/PierreRouge/ccDice/assets/cancer_cells_example.png" alt="drawing" width="500"/>
 </p>
 
 
