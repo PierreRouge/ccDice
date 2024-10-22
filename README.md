@@ -4,9 +4,8 @@ Official repository for the **ccDice metric** presented at the Workshop on Topol
 
 You can find our paper [here](https://hal.science/hal-04653406/document).
 
-<p align="center"><img src="https://github.com/PierreRouge/ccDice/assets/cancer_cells_example.png" alt="drawing" width="500"/>
+<p align="center"><img src="https://github.com/PierreRouge/ccDice/assets/cancer_cells_example.png" alt="drawing" width="300"/>
 </p>
-
 
 The ccDice is a t**opological metric** that takes into account the **spatial relationships of the topological objects**. It generalizes the well known Dice metric from pixels to connected components. It has the advantage of being **normalized, interpretable and fast to compute.** 
 
